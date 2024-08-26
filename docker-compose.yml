@@ -177,6 +177,23 @@ services:
       - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    # image: istresearch/jenkins:latest
+    container_name: jenkins4${COMPOSE_PROJECT_NAME}
+    user: jenkins
+    ports:
+        - '9080:9080'
+        - '50000:50000'
+    network_mode: "host"
+    volumes:
+        - jenkins_data:/var/jenkins_home
+        - backup-restore:/backup_restore
+        # - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+        - 'JENKINS_OPTS=--httpPort=9080 --prefix=/jenkins'
+    restart: unless-stopped
+
 volumes:
   statics:
     name: ${COMPOSE_PROJECT_NAME}-statics
@@ -198,3 +215,5 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}-tmp
   rabbitmq:
     name: ${COMPOSE_PROJECT_NAME}-rabbitmq
+  jenkins_data:
+    name: ${COMPOSE_PROJECT_NAME}-jenkins_data
